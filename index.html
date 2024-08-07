@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complejo el paraiso</title>
+    <style>
+        .logo-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+        .logo-container img {
+            max-width: 100px; /* Ajusta el tamaño del logo según sea necesario */
+            height: auto;
+        }
+        .input-container {
+            margin-top: 150px; /* Ajusta el margen superior si es necesario para que no se solape con el logo */
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input[type="text"], button {
+            width: 300px;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+        }
+        input[type="text"] {
+            background-color: #f0f0f0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result-list {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .result-item {
+            width: 80%;
+            padding: 15px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.8); /* Fondo blanco semitransparente */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo-container">
+        <img src="instant22.png" alt="Logo"> <!-- Reemplaza 'logo.png' con la ruta de tu logo -->
+    </div>
+
+    <div class="input-container">
+        
+        <input type="text" id="nameInput" placeholder="Nombre">
+        <input type="text" id="dniInput" placeholder="DNI">
+        <button onclick="addElement()">Agregar</button>
+
+        <input type="text" id="removeInput" placeholder="DNI para eliminar">
+        <button onclick="removeElement()">Eliminar</button>
+
+        <label for="searchInput">Buscar por nombre o DNI:</label>
+        <input type="text" id="searchInput" onkeyup="filterList()">
+    </div>
+
+    <ul id="nameList" class="result-list">
+    </ul>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            loadElements();
+        });
+
+        function filterList() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const listItems = document.querySelectorAll('.result-item');
+
+            listItems.forEach(item => {
+                const name = item.getAttribute('data-name').toLowerCase();
+                const dni = item.getAttribute('data-dni').toLowerCase();
+                if (name.includes(input) || dni.includes(input)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function addElement() {
+            var nameInput = document.getElementById('nameInput');
+            var dniInput = document.getElementById('dniInput');
+            var nameValue = nameInput.value.trim();
+            var dniValue = dniInput.value.trim();
+
+            if (nameValue && dniValue) {
+                var ul = document.getElementById('nameList');
+                var li = document.createElement('li');
+                li.className = 'result-item';
+                li.setAttribute('data-name', nameValue);
+                li.setAttribute('data-dni', dniValue);
+                li.textContent = `${nameValue} - ${dniValue}`;
+                ul.appendChild(li);
+
+                saveElements();
+
+                nameInput.value = '';
+                dniInput.value = '';
+            }
+        }
+
+        function removeElement() {
+            var input = document.getElementById('removeInput');
+            var value = input.value.trim();
+
+            if (value) {
+                var ul = document.getElementById('nameList');
+                var items = ul.getElementsByClassName('result-item');
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i].getAttribute('data-dni') === value) {
+                        ul.removeChild(items[i]);
+                        saveElements();
+                        break;
+                    }
+                }
+                input.value = '';
+            }
+        }
+
+        function saveElements() {
+            var ul = document.getElementById('nameList');
+            var items = ul.getElementsByClassName('result-item');
+            var elements = [];
+            for (var i = 0; i < items.length; i++) {
+                elements.push({
+                    name: items[i].getAttribute('data-name'),
+                    dni: items[i].getAttribute('data-dni')
+                });
+            }
+            localStorage.setItem('elements', JSON.stringify(elements));
+        }
+
+        function loadElements() {
+            var elements = JSON.parse(localStorage.getItem('elements'));
+            if (elements) {
+                var ul = document.getElementById('nameList');
+                ul.innerHTML = '';
+                for (var i = 0; i < elements.length; i++) {
+                    var li = document.createElement('li');
+                    li.className = 'result-item';
+                    li.setAttribute('data-name', elements[i].name);
+                    li.setAttribute('data-dni', elements[i.dni]);
+                    li.innerHTML = `${elements[i].name}<br>${elements[i].dni}`;
+                    ul.appendChild(li);
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
