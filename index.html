@@ -79,6 +79,7 @@
 
         <label for="searchInput">Buscar por nombre o DNI:</label>
         <input type="text" id="searchInput" onkeyup="filterList()">
+        
     </div>
 
     <ul id="nameList" class="result-list">
@@ -166,8 +167,8 @@
                     var li = document.createElement('li');
                     li.className = 'result-item';
                     li.setAttribute('data-name', elements[i].name);
-                    li.setAttribute('data-dni', elements[i.dni]);
-                    li.innerHTML = `${elements[i].name}<br>${elements[i].dni}`;
+                    li.setAttribute('data-dni', elements[i].dni);
+                    li.textContent = `${elements[i].name} - ${elements[i].dni}`;
                     ul.appendChild(li);
                 }
             }
